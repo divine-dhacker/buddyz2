@@ -111,10 +111,12 @@ input[type="text"] {
   background-color: var(--bg-color);
   border: 2px solid var(--border-color);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.5rem;
   cursor: pointer;
   transition: transform 0.2s, border-color 0.2s;
   text-align: center;
+  flex: 1 1 calc(50% - 1rem);
+  max-width: calc(50% - 1rem);
 }
 
 .quiz-option:hover {
@@ -124,6 +126,28 @@ input[type="text"] {
 
 .quiz-option.selected {
   border-color: var(--primary-color);
+}
+
+/* Option image layout */
+.option-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.option-text {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@media (max-width: 520px) {
+  .quiz-option {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
 }
 
 .quiz-nav {

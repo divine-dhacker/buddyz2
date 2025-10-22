@@ -103,26 +103,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
     }
 
+    // === Utility: Safe HTML escaping (for content and attributes) ===
+    function escapeHtml(value) {
+        if (value === undefined || value === null) return '';
+        return String(value).replace(/[&<>"']/g, (ch) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[ch]);
+    }
+
+    // === Utility: Stable image per option text (no data changes required) ===
+    function getOptionImageUrl(text) {
+        const seed = encodeURIComponent(String(text || '').toLowerCase());
+        // picsum with seed ensures stable but unique images per option
+        return `https://picsum.photos/seed/${seed}/300/200`;
+    }
+
     function renderQuestion(questions, userAnswers) {
         if (questions.length === 0) return;
 
         const questionData = questions[currentQuestionIndex];
         const selectedOption = userAnswers[currentQuestionIndex];
 
+        const normalizeOption = (opt) => {
+            if (typeof opt === 'string') {
+                return { value: opt, text: opt, imageUrl: getOptionImageUrl(opt) };
+            }
+            const text = (opt && (opt.text || opt.value)) || '';
+            return {
+                value: (opt && (opt.value || opt.text)) || text,
+                text,
+                imageUrl: (opt && opt.imageUrl) || getOptionImageUrl(text)
+            };
+        };
+
+        const optionsHtml = (questionData.options || []).map((opt) => {
+            const { value, text, imageUrl } = normalizeOption(opt);
+            const isSelected = selectedOption === value;
+            return `
+                <div class="quiz-option ${isSelected ? 'selected' : ''}" data-value="${escapeHtml(value)}">
+                    ${imageUrl ? `<img class="option-image" src="${imageUrl}" alt="${escapeHtml(text)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                    <div class="option-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+        }).join('');
+
         questionsContainer.innerHTML = `
-            <h3>${currentQuestionIndex + 1}. ${questionData.question}</h3>
-            <div class="quiz-options">
-                ${questionData.options.map(option => `
-                    <div class="quiz-option ${selectedOption === option ? 'selected' : ''}" data-value="${option}">
-                        ${option}
-                    </div>
-                `).join('')}
-            </div>
+            <h3>${currentQuestionIndex + 1}. ${escapeHtml(questionData.question)}</h3>
+            <div class="quiz-options">${optionsHtml}</div>
         `;
-        document.querySelectorAll('.quiz-option').forEach(optionEl => {
+
+        const optionNodes = questionsContainer.querySelectorAll('.quiz-option');
+        optionNodes.forEach(optionEl => {
             optionEl.addEventListener('click', () => {
-                document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+                optionNodes.forEach(el => el.classList.remove('selected'));
                 optionEl.classList.add('selected');
+                // Persist selection immediately for stability when navigating
+                const value = optionEl.dataset.value;
+                const answersArray = quizId ? takerAnswers : creatorAnswers;
+                answersArray[currentQuestionIndex] = value;
             });
         });
     }
@@ -460,10 +502,26 @@ localStorage.setItem('myCreatedQuizzes', JSON.stringify(myQuizzes));
     }
 
     // === Copy Link ===
-    document.querySelector('.copy-btn').addEventListener('click', () => {
+    document.querySelector('.copy-btn').addEventListener('click', async () => {
         const linkInput = document.getElementById('share-link');
-        linkInput.select();
-        document.execCommand('copy');
-        alert("Link copied to clipboard!");
+        const text = linkInput.value || '';
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                linkInput.select();
+                document.execCommand('copy');
+            }
+            alert("Link copied to clipboard!");
+        } catch (err) {
+            // Fallback
+            try {
+                linkInput.select();
+                document.execCommand('copy');
+                alert("Link copied to clipboard!");
+            } catch (e) {
+                alert("Unable to copy link. Please copy manually.");
+            }
+        }
     });
 });
