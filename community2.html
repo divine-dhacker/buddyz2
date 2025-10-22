@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buddyz — Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0f1113;
+      --card: #121416;
+      --muted: #9aa0a6;
+      --accent: #ff2d2d;
+      --glass: rgba(255, 255, 255, 0.03);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: #eee;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .app {
+      max-width: 980px;
+      margin: 20px auto;
+      padding: 16px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+    header .menu-icon {
+        font-size: 24px;
+        cursor: pointer;
+    }
+    /* Hamburger Menu Overlay */
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    .menu-overlay.open {
+        display: flex;
+    }
+    .menu-content {
+        background: var(--card);
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        position: relative;
+    }
+    .menu-content .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .menu-content .menu-item {
+        display: block;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #eee;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+    }
+    .menu-content .menu-item:last-child {
+        border-bottom: none;
+    }
+    /* Stories carousel */
+    .stories {
+      display: flex;
+      overflow-x: auto;
+      padding: 8px 2px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .story {
+      min-width: 100px;
+      height: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .story:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .story .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #222, #111);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.03);
+    }
+    .story .story-name {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+    /* Post Modal - Full screen story view */
+    .post-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .post-modal.open {
+      display: flex;
+    }
+    .post-content {
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .post-content .post-header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .post-content .post-header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-content .post-header .user-info .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .post-content .post-header .user-info .name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .post-content .post-header .close-btn {
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .post-content .post-media {
+      max-width: 90%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .post-content .post-text {
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    .post-actions {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-actions .btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .post-actions .btn.liked {
+        color: var(--accent);
+    }
+    .post-actions .comment-input {
+      flex: 1;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 20px;
+    }
+    .post-actions .comment-submit {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    /* Composer modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+      z-index: 150;
+    }
+    .modal.open {
+      display: flex;
+    }
+    .composer {
+      width: 420px;
+      background: var(--card);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .composer textarea {
+      width: 100%;
+      height: 90px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      color: #eee;
+      padding: 8px;
+      border-radius: 8px;
+      resize: none;
+      margin-bottom: 8px;
+    }
+    .composer input[type="text"], .composer input[type="file"] {
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      color: #eee;
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .composer .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    /* Poll styling */
+    .poll-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .poll-option-btn {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        position: relative;
+        text-align: center;
+    }
+    .poll-option-btn .poll-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: rgba(255,255,255,0.2);
+        transition: width 0.5s ease-in-out;
+        border-radius: 8px;
+        z-index: 0;
+    }
+    .poll-option-btn span {
+        position: relative;
+        z-index: 1;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media(max-width: 520px){
+      .composer{width:92vw}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Buddyz — Community</h1>
+      <i class="fas fa-bars menu-icon" id="openMenu"></i>
+    </header>
+    <section class="stories" id="stories"></section>
+  </div>
+  
+  <div class="menu-overlay" id="menuOverlay">
+      <div class="menu-content">
+          <i class="fas fa-times close-btn" id="closeMenu"></i>
+          <h2 style="margin-bottom: 20px;">Menu</h2>
+          <a href="#" class="menu-item" id="menuOpenComposer">Create Post</a>
+          <a href="#" class="menu-item">My Profile</a>
+          <a href="#" class="menu-item">Settings</a>
+      </div>
+  </div>
+
+  <div class="post-modal" id="postModal">
+    <div class="post-content" id="postContent">
+      <div class="post-header">
+        <div class="user-info">
+          <div class="avatar" id="postAvatar"></div>
+          <div>
+            <div class="name" id="postAuthor"></div>
+            <div class="small" id="postTimestamp"></div>
+          </div>
+        </div>
+        <i class="fas fa-times close-btn" id="closePostModal"></i>
+      </div>
+      <div id="mainPostContent"></div>
+      <div class="post-actions">
+        <button class="btn" id="likeBtn"><i class="fas fa-heart"></i> <span id="likeCount">0</span></button>
+        <button class="btn" id="shareBtn"><i class="fas fa-share-alt"></i></button>
+        <input type="text" class="comment-input" id="commentInput" placeholder="Reply...">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="composer">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Create Post</strong>
+        <button class="btn" id="closeComposer"><i class="fas fa-times"></i></button>
+      </div>
+      <input type="text" id="authorName" placeholder="Your Name" required>
+      <textarea id="caption" placeholder="Say something..."></textarea>
+      <div class="row">
+        <label class="btn"><i class="fas fa-image"></i> Attach Image<input type="file" id="imageInput" multiple></label>
+        <button class="btn" id="makePollBtn"><i class="fas fa-poll-h"></i> Create Poll</button>
+        <div style="flex:1"></div>
+        <button class="btn" id="submitPost"><i class="fas fa-paper-plane"></i> Post</button>
+      </div>
+      <div id="pollOptionsContainer" style="display: none; margin-top: 10px;">
+        <input type="text" class="poll-option-input" placeholder="Option 1">
+        <input type="text" class="poll-option-input" placeholder="Option 2">
+        <button class="btn" id="addPollOption">Add Option</button>
+      </div>
+      <div class="small" id="uploaderStatus"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVR8OxIwbMkasKfjTVQOpi69Ikw6LraSo",
+      authDomain: "buddy-ea6cd.firebaseapp.com",
+      databaseURL: "https://buddy-ea6cd-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "buddy-ea6cd",
+      storageBucket: "buddy-ea6cd.appspot.com",
+      messagingSenderId: "947901635950",
+      appId: "1:947901635950:web:dd11c3a278eb18768e357f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
+    let currentUser = null;
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        updateStories();
+      } else {
+        firebase.auth().signInAnonymously().catch(err => console.error("Auth error:", err));
+      }
+    });
+
+    // DOM Elements
+    const storiesEl = document.getElementById('stories');
+    const modal = document.getElementById('modal');
+    const closeComposerBtn = document.getElementById('closeComposer');
+    const authorNameInput = document.getElementById('authorName');
+    const caption = document.getElementById('caption');
+    const imageInput = document.getElementById('imageInput');
+    const submitPost = document.getElementById('submitPost');
+    const uploaderStatus = document.getElementById('uploaderStatus');
+    const postModal = document.getElementById('postModal');
+    const mainPostContent = document.getElementById('mainPostContent');
+    const postAuthorEl = document.getElementById('postAuthor');
+    const postTimestampEl = document.getElementById('postTimestamp');
+    const postAvatarEl = document.getElementById('postAvatar');
+    const closePostModalBtn = document.getElementById('closePostModal');
+    const likeBtn = document.getElementById('likeBtn');
+    const likeCountEl = document.getElementById('likeCount');
+    const commentInput = document.getElementById('commentInput');
+    const commentSubmitBtn = document.getElementById('commentSubmit');
+    const makePollBtn = document.getElementById('makePollBtn');
+    const pollOptionsContainer = document.getElementById('pollOptionsContainer');
+    const addPollOptionBtn = document.getElementById('addPollOption');
+    const shareBtn = document.getElementById('shareBtn');
+    const openMenuBtn = document.getElementById('openMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMenu');
+    const menuOpenComposerBtn = document.getElementById('menuOpenComposer');
+    
+    let currentPostId = null;
+
+    // Menu and Composer Button Events
+    closeComposerBtn.addEventListener('click', () => modal.classList.remove('open'));
+    openMenuBtn.addEventListener('click', () => menuOverlay.classList.add('open'));
+    closeMenuBtn.addEventListener('click', () => menuOverlay.classList.remove('open'));
+    menuOpenComposerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        menuOverlay.classList.remove('open');
+        modal.classList.add('open');
+    });
+    closePostModalBtn.addEventListener('click', () => {
+        postModal.classList.remove('open');
+        if (currentPostId) {
+            db.ref(`posts/${currentPostId}`).off('value'); // Detach the listener
+        }
+    });
+
+    let isCreatingPoll = false;
+    makePollBtn.addEventListener('click', () => {
+        isCreatingPoll = !isCreatingPoll;
+        pollOptionsContainer.style.display = isCreatingPoll ? 'block' : 'none';
+        makePollBtn.style.color = isCreatingPoll ? 'var(--accent)' : '#fff';
+    });
+
+    addPollOptionBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'poll-option-input';
+        input.placeholder = `Option ${pollOptionsContainer.querySelectorAll('.poll-option-input').length + 1}`;
+        pollOptionsContainer.insertBefore(input, addPollOptionBtn);
+    });
+
+    let selectedImageFiles = [];
+    imageInput.addEventListener('change', (e) => {
+      selectedImageFiles = Array.from(e.target.files);
+      if (selectedImageFiles.length > 0) {
+        uploaderStatus.textContent = `${selectedImageFiles.length} file(s) selected`;
+      } else {
+        uploaderStatus.textContent = '';
+      }
+    });
+
+    submitPost.addEventListener('click', async () => {
+        const author = authorNameInput.value.trim();
+        const text = caption.value.trim();
+        if (!author) {
+            alert("Please enter your name!");
+            return;
+        }
+
+        const uid = currentUser ? currentUser.uid : 'anon';
+        const post = {
+            author: author,
+            authorId: uid,
+            caption: text || '',
+            likes: 0,
+            timestamp: Date.now(),
+        };
+
+        if (isCreatingPoll) {
+            const pollOptions = Array.from(pollOptionsContainer.querySelectorAll('.poll-option-input'))
+                                    .map(input => input.value.trim())
+                                    .filter(val => val !== '');
+            if (pollOptions.length < 2) {
+                alert("Please provide at least two poll options.");
+                return;
+            }
+            post.type = 'poll';
+            post.poll = pollOptions.reduce((acc, option) => ({ ...acc, [option]: 0 }), {});
+        } else if (selectedImageFiles.length > 0) {
+            post.type = 'images';
+            post.content = [];
+            uploaderStatus.textContent = `Uploading ${selectedImageFiles.length} file(s)...`;
+            for (const file of selectedImageFiles) {
+                const path = `posts_images/${uid}_${Date.now()}_${file.name}`;
+                const snap = await storage.ref(path).put(file);
+                const url = await snap.ref.getDownloadURL();
+                post.content.push(url);
+            }
+            uploaderStatus.textContent = 'Upload complete.';
+        } else {
+            post.type = 'text';
+        }
+
+        await db.ref('posts').push(post);
+        modal.classList.remove('open');
+        authorNameInput.value = '';
+        caption.value = '';
+        imageInput.value = '';
+        selectedImageFiles = [];
+        uploaderStatus.textContent = '';
+        isCreatingPoll = false;
+        pollOptionsContainer.innerHTML = `<input type="text" class="poll-option-input" placeholder="Option 1"><input type="text" class="poll-option-input" placeholder="Option 2"><button class="btn" id="addPollOption">Add Option</button>`;
+        pollOptionsContainer.style.display = 'none';
+        updateStories();
+    });
+
+    // Post Viewer Logic
+    function timeAgo(ts) {
+        const seconds = Math.floor((Date.now() - ts) / 1000);
+        if (seconds < 60) return `${seconds}s`;
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h`;
+        const days = Math.floor(hours / 24);
+        return `${days}d`;
+    }
+
+    function showPost(post) {
+        currentPostId = post.id;
+        postAuthorEl.textContent = post.author || 'Anonymous';
+        postTimestampEl.textContent = timeAgo(post.timestamp);
+        postAvatarEl.textContent = (post.author || 'A').charAt(0).toUpperCase();
+        postModal.classList.add('open');
+
+        // Listen for real-time updates for this specific post
+        db.ref(`posts/${post.id}`).on('value', snapshot => {
+            const updatedPost = snapshot.val();
+            if (!updatedPost) return;
+
+            // Update like count
+            likeCountEl.textContent = updatedPost.likes || 0;
+            
+            // Check user's like status
+            if (currentUser) {
+                db.ref(`postLikes/${post.id}/${currentUser.uid}`).once('value', likeSnapshot => {
+                    if (likeSnapshot.exists()) {
+                        likeBtn.classList.add('liked');
+                    } else {
+                        likeBtn.classList.remove('liked');
+                    }
+                });
+            }
+
+            // Re-render post content based on type
+            mainPostContent.innerHTML = '';
+            let contentHtml = '';
+            if (updatedPost.type === 'images' && Array.isArray(updatedPost.content)) {
+                contentHtml = updatedPost.content.map(url => `<img class="post-media" src="${url}" alt="Post image">`).join('');
+            } else if (updatedPost.type === 'text') {
+                contentHtml = `<p class="post-text">${updatedPost.caption || ''}</p>`;
+            } else if (updatedPost.type === 'poll') {
+                const totalVotes = Object.values(updatedPost.poll || {}).reduce((sum, votes) => sum + votes, 0);
+                contentHtml = `<p class="post-text">${updatedPost.caption || ''}</p><div class="poll-options">`;
+                for (const option in updatedPost.poll) {
+                    const votePercentage = totalVotes > 0 ? (updatedPost.poll[option] / totalVotes) * 100 : 0;
+                    contentHtml += `<button class="poll-option-btn" data-option="${option}">
+                                      <div class="poll-progress" style="width:${votePercentage}%"></div>
+                                      <span>${option} (${updatedPost.poll[option]})</span>
+                                    </button>`;
+                }
+                contentHtml += `</div>`;
+            }
+            mainPostContent.innerHTML = contentHtml;
+
+            // Re-attach poll vote listeners after re-rendering
+            if (updatedPost.type === 'poll') {
+                document.querySelectorAll('.poll-option-btn').forEach(button => {
+                    button.onclick = () => voteOnPoll(post.id, button.dataset.option);
+                });
+            }
+        });
+
+        // Re-attach static event listeners
+        likeBtn.onclick = () => toggleLike(post.id);
+        commentSubmitBtn.onclick = () => addComment(post.id, commentInput.value);
+        shareBtn.onclick = () => sharePost(post);
+    }
+    
+    function toggleLike(postId) {
+        if (!currentUser) return;
+        const userLikeRef = db.ref(`postLikes/${postId}/${currentUser.uid}`);
+        const likesRef = db.ref(`posts/${postId}/likes`);
+        userLikeRef.once('value').then(snapshot => {
+            if (snapshot.exists()) {
+                userLikeRef.remove();
+                likesRef.transaction(current => (current || 1) - 1);
+            } else {
+                userLikeRef.set(true);
+                likesRef.transaction(current => (current || 0) + 1);
+            }
+        });
+    }
+
+    function addComment(postId, commentText) {
+        if (!commentText.trim()) return;
+        const author = authorNameInput.value.trim() || 'Anonymous';
+        db.ref(`posts/${postId}/comments`).push({
+            author: author,
+            text: commentText,
+            timestamp: Date.now()
+        }).then(() => {
+            commentInput.value = '';
+        });
+    }
+
+    function voteOnPoll(postId, option) {
+        if (!currentUser) return;
+        const userVoteRef = db.ref(`postVotes/${postId}/${currentUser.uid}`);
+        const pollOptionRef = db.ref(`posts/${postId}/poll/${option}`);
+        
+        userVoteRef.once('value').then(snapshot => {
+            if (!snapshot.exists()) {
+                userVoteRef.set(true);
+                pollOptionRef.transaction(current => (current || 0) + 1);
+            } else {
+                alert("You have already voted on this poll.");
+            }
+        });
+    }
+
+    function sharePost(post) {
+        if (navigator.share) {
+            let title = `New post by ${post.author}`;
+            let text = post.caption || 'Check out this post on Buddyz!';
+            
+            // This URL is a placeholder. For a real app, you would need a unique URL for each post.
+            const url = window.location.href; 
+
+            navigator.share({
+                title: title,
+                text: text,
+                url: url
+            })
+            .then(() => console.log('Successful share'))
+            .catch((error) => console.log('Error sharing:', error));
+        } else {
+            alert('Web Share API is not supported on this browser. You can copy the link instead.');
+        }
+    }
+
+    let posts = [];
+    db.ref('posts').on('value', snapshot => {
+        const postsObj = snapshot.val() || {};
+        posts = Object.keys(postsObj).map(key => ({ ...postsObj[key], id: key })).reverse();
+        updateStories();
+    });
+
+    function updateStories() {
+      const uniqueAuthors = {};
+      posts.forEach(post => {
+          if (!uniqueAuthors[post.authorId]) {
+              uniqueAuthors[post.authorId] = post;
+          }
+      });
+      storiesEl.innerHTML = '';
+      Object.values(uniqueAuthors).forEach(post => {
+          const storyDiv = document.createElement('div');
+          storyDiv.className = 'story';
+          storyDiv.innerHTML = `
+              <div class="avatar">${(post.author || 'A').charAt(0).toUpperCase()}</div>
+              <small class="story-name">${post.author || 'Anon'}</small>
+          `;
+          storyDiv.addEventListener('click', () => showPost(post));
+          storiesEl.appendChild(storyDiv);
+      });
+    }
+  </script>
+</body>
+</html>

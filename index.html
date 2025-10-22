@@ -1,949 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buddyz - BFF Quiz</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons for a clean, modern look -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3/dist/phosphor.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #121212;
-            color: #E0E0E0;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden; /* Prevents horizontal scrolling */
-        }
-        .container-fluid {
-            padding: 0 1rem;
-            max-width: 1400px;
-            margin: auto;
-        }
-        .text-gradient {
-            background: linear-gradient(90deg, #be123c, #881337); /* Darker red gradient */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            border-radius: 9999px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #be123c, #881337); /* Darker red gradient */
-            color: #E0E0E0;
-        }
-        .btn-primary:hover {
-            opacity: 0.8;
-        }
-        .input-group input {
-            background-color: #2D2D2D;
-            border: 1px solid #444;
-            border-radius: 0.5rem;
-            color: #E0E0E0;
-        }
-        .card {
-            background-color: #1E1E1E;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .card .icon-ph {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-        }
-        .card-sm {
-            padding: 1rem;
-            border-radius: 0.75rem;
-        }
-        .hamburger-menu {
-            display: block;
-            cursor: pointer;
-            z-index: 5000;
-        }
-        .hamburger-menu .bar {
-            width: 25px;
-            height: 3px;
-            background-color: #E0E0E0;
-            margin: 5px 0;
-            transition: 0.4s;
-        }
-        .mobile-nav {
-            position: fixed;
-            top: 10;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #121212;
-            padding-top: 5rem;
-            transition: transform 0.4s ease-in-out;
-            transform: translateX(-100%);
-            z-index: 40;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            display: flex; /* Always display but hide with transform */
-        }
-        .mobile-nav.open {
-            transform: translateX(0);
-        }
-        .mobile-nav a {
-            color: #E0E0E0;
-            padding: 1rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-decoration: none;
-            width: 100%;
-            text-align: center;
-            border-bottom: 1px solid #2D2D2D;
-        }
-        .mobile-nav a:last-child {
-            border-bottom: none;
-        }
-        
-        @media (min-width: 768px) {
-            .hamburger-menu {
-                display: none;
-            }
-            .mobile-nav {
-                display: none;
-            }
-            .desktop-nav {
-                display: flex;
-            }
-        }
-        
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #1E1E1E;
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
-            position: relative;
-            max-width: 350px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .modal-content p {
-            margin: 0 0 1rem 0;
-            font-weight: 500;
-        }
-        .modal-content button {
-            background: linear-gradient(90deg, #be123c, #881337);
-            color: #E0E0E0;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-        }
-        
-        
-        
-        /* Style for hamburger bars */
-.hamburger-menu {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    z-index: 1000;
-}
-
-.hamburger-menu .bar {
-    width: 25px;
-    height: 3px;
-    background-color: white;
-    transition: 0.3s;
-}
-
-/* When menu is active, turn bars into × */
-.hamburger-menu.active .bar:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger-menu.active .bar:nth-child(2) {
-    opacity: 0;
-}
-
-.hamburger-menu.active .bar:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddyz BFF Quiz</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
-<body class="bg-gray-900 text-gray-200">
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html" class="logo">Buddyz</a>
+    </nav>
+    <main>
+      <!-- Original Creator Section -->
+      <section id="creator-section" class="card" style="display: none;">
+        <h3>Test Your Level of Friendship</h3>
+        <p>
+          ✏️ Answer some questions about yourself, 📤 Share the link, 🔍 They Answer, and then you'll see their score.
+        </p>
+        <form id="create-form">
+          <input type="text" id="creator-name" placeholder="Enter your name" required />
+          <button type="submit" class="btn">Start Quiz</button>
+        </form>
+      </section>
 
-    <!-- Modal for messages -->
-    <div id="myModal" class="modal fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 hidden">
-        <div class="modal-content bg-gray-800 p-8 rounded-2xl text-center shadow-lg max-w-sm w-full">
-            <p id="modal-text" class="mb-4 text-white font-medium"></p>
-            <button onclick="closeModal()" class="btn btn-primary px-6 py-2">OK</button>
+      <!-- Taker Section (for friends) -->
+      <section id="taker-section" class="card" style="display: none;">
+        <h3 id="taker-heading">Take Your Friend's Quiz</h3>
+        <p id="taker-subheading">Enter your name to begin guessing.</p>
+        <form id="take-form">
+          <input type="text" id="taker-name" placeholder="Enter your name" required />
+          <button type="submit" class="btn">Start Guessing</button>
+        </form>
+      </section>
+
+      <!-- The Quiz Itself -->
+      <section id="quiz-section" class="card" style="display: none;">
+        <h2 id="quiz-heading">Answer These Questions</h2>
+        <div id="questions-container"></div>
+        <div class="quiz-nav">
+          <button id="prev-btn" class="btn" style="display: none;">Previous</button>
+          <button id="next-btn" class="btn">Next</button>
+          <button id="submit-btn" class="btn" style="display: none;">Submit</button>
         </div>
-    </div>
+      </section>
 
-    <!-- Header -->
-    <header class="py-4 border-b border-gray-800 sticky top-0 z-40 bg-gray-900">
-        <nav class="container-fluid flex justify-between items-center">
-            <a href="/" class="text-3xl font-extrabold text-gradient">Buddyz</a>
-            <div class="desktop-nav hidden md:flex items-center space-x-6">
-                <a href="#about" class="text-white hover:text-red-400 transition-colors">About</a>
-                <a href="#featured" class="text-white hover:text-red-400 transition-colors">Featured Quizzes</a>
-                <a href="#" id="go-to-dashboard-btn" class="text-white hover:text-red-400 transition-colors">My Dashboard</a>
-                <a href="#" id="take-a-quiz-btn" class="btn btn-primary">Take a Quiz</a>
-            </div>
-            <div id="hamburger-menu" class="hamburger-menu md:hidden">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </nav>
-    </header>
+      <!-- Share Link -->
+      <section id="share-section" class="card" style="display: none;">
+        <h2>Your Quiz is Ready!</h2>
+        <p>Share this link with your friends to see how well they know you.</p>
+        <div class="share-box">
+          <input type="text" id="share-link" readonly />
+          <button class="btn copy-btn">Copy Link</button>
+        </div>
+        <a href="#" id="view-results-link" class="btn">View Quiz Scoreboard</a>
+        <!-- New button to go to the dashboard -->
+        <button id="go-to-dashboard-btn" class="btn secondary-btn" style="margin-top: 10px;">Go to My Dashboard</button>
+      </section>
 
-    <!-- Mobile Nav -->
-    <div id="mobile-nav" class="mobile-nav flex-col items-center">
-        <a href="#about" class="block w-full text-center" onclick="closeMobileNav()">About</a>
-        <a href="#featured" class="block w-full text-center" onclick="closeMobileNav()">Featured Quizzes</a>
-        <a href="#" id="go-to-dashboard-btn-mobile" class="block w-full text-center" onclick="closeMobileNav()">My Dashboard</a>
-        <a href="#" id="take-a-quiz-btn-mobile" class="btn btn-primary mt-4">Take a Quiz</a>
-    </div>
+      <!-- New Creator Dashboard Section -->
+      <section id="creator-dashboard" class="card" style="display: none;">
+        <h2>My Quizzes</h2>
+        <div id="creator-quizzes-list">
+          <p>You haven't created any quizzes yet.</p>
+        </div>
+        <button id="create-new-quiz-btn" class="btn" style="margin-top: 20px;">Create a New Quiz</button>
+      </section>
 
-    <main class="container-fluid py-8">
+      <!-- Scoreboard -->
+      <section id="scoreboard-section" class="card" style="display: none;">
+        <h2 id="scoreboard-heading">Scoreboard</h2>
+        <p id="scoreboard-subheading"></p>
+        <ul id="scores-list"></ul>
+        <button class="btn" onclick="window.location.href = 'index.html'">Create Another Quiz</button>
+      </section>
 
-        <!-- Hero Section -->
-        <section id="creator-section" class="flex flex-col items-center text-center py-12 lg:py-24">
-            <h1 class="text-5xl lg:text-7xl font-extrabold mb-4 leading-tight">Forge Deeper Bonds.</h1>
-            <p class="text-base lg:text-xl max-w-xl text-gray-400 mb-8">
-                Create a personalized quiz about yourself and share it with your friends to see how well they really know you.
-            </p>
-            <div class="card w-full max-w-sm">
-                <div class="flex items-center mb-4">
-                    <i class="ph-pencil-line-duotone text-gradient text-3xl mr-3"></i>
-                    <h2 class="text-xl font-bold">Craft Your Quiz</h2>
-                </div>
-                <p class="text-gray-400 text-sm mb-4">
-                    Start by creating your own quiz. We'll give you a random set of questions and you provide the correct answers.
-                </p>
-                <form id="create-form">
-                    <div class="input-group mb-4">
-                        <label for="creator-name" class="block text-gray-400 mb-1 text-left">Your Name:</label>
-                        <input type="text" id="creator-name" placeholder="Enter your name" required class="w-full px-4 py-2 rounded-lg">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Start Quiz</button>
-                </form>
-            </div>
-            <a href="#" id="go-to-dashboard-btn-hero" class="text-sm text-red-400 mt-4 underline">Go to my dashboard</a>
-        </section>
+      <!-- Final Score for Quiz Taker -->
+      <section id="result-section" class="card" style="display: none;">
+        <h2>Your Score: <span id="final-score"></span></h2>
+        <p>Thanks for playing! <a href="index.html">Create your own quiz.</a></p>
+      </section>
 
-        <!-- About Section -->
-        <section id="about" class="py-12 lg:py-16">
-            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-12">The Buddyz Experience</h2>
-            <div class="grid md:grid-cols-3 gap-8 text-center">
-                <div class="card p-6">
-                    <div class="flex flex-col items-center">
-                        <i class="ph-game-controller-duotone text-gradient text-4xl mb-4"></i>
-                        <h3 class="font-bold text-xl mb-2">The Concept</h3>
-                        <p class="text-gray-400">It's simple. You set the rules, your friends answer, and the score reveals all. A fun and insightful way to test your connection.</p>
-                    </div>
-                </div>
-                <div class="card p-6">
-                    <div class="flex flex-col items-center">
-                        <i class="ph-users-duotone text-gradient text-4xl mb-4"></i>
-                        <h3 class="font-bold text-xl mb-2">The Audience</h3>
-                        <p class="text-gray-400">Share your quiz with a select few or your entire social circle. See if your best friends really stand out from the crowd.</p>
-                    </div>
-                </div>
-                <div class="card p-6">
-                    <div class="flex flex-col items-center">
-                        <i class="ph-trophy-duotone text-gradient text-4xl mb-4"></i>
-                        <h3 class="font-bold text-xl mb-2">The Scoreboard</h3>
-                        <p class="text-gray-400">A real-time leaderboard shows who knows you best, with the highest scores at the top. Bragging rights are earned here.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Quizzes Section -->
-        <section id="featured" class="py-12 lg:py-16">
-            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-8">Featured Quizzes</h2>
-            <p class="text-center text-gray-400 mb-12 max-w-xl mx-auto">Explore a wide variety of quiz topics to get inspired for your own. What will you ask your friends about?</p>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Existing Topics -->
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-monitor-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Movies & Shows</h3>
-                    <p class="text-gray-400 text-sm">Find out who pays attention to your taste in cinema and TV series.</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-pizza-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Food & Cravings</h3>
-                    <p class="text-gray-400 text-sm">Do they know your go-to snack, restaurant, or secret craving?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-airplane-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Travel Memories</h3>
-                    <p class="text-gray-400 text-sm">Test their knowledge of your favorite destinations and travel stories.</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-music-notes-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Music & Artists</h3>
-                    <p class="text-gray-400 text-sm">From your favorite genre to that one song on repeat, how well do they know your playlist?</p>
-                </div>
-                <!-- New Creative Topics -->
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-sparkle-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Childhood Trivia</h3>
-                    <p class="text-gray-400 text-sm">Can they guess what you were like as a kid or your favorite childhood memory?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-paint-brush-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Hobbies & Interests</h3>
-                    <p class="text-gray-400 text-sm">How well do they know what you do in your free time and what you are passionate about?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-dog-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Pets & Animals</h3>
-                    <p class="text-gray-400 text-sm">Do they know your pet's name or your dream animal to own?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-book-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Books & Reading</h3>
-                    <p class="text-gray-400 text-sm">Can they name your favorite author or the last book you read?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-confetti-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Party Habits</h3>
-                    <p class="text-gray-400 text-sm">Do your friends know if you're the life of the party or the wallflower?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-popcorn-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Pop Culture</h3>
-                    <p class="text-gray-400 text-sm">Test their knowledge of your favorite celebrity crushes and viral trends.</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-mask-happy-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Personality Traits</h3>
-                    <p class="text-gray-400 text-sm">Can they guess if you're an introvert, extrovert, or something in between?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-bed-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Daily Routine</h3>
-                    <p class="text-gray-400 text-sm">Do they know if you're a morning lark or a night owl?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-calendar-blank-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Future Plans</h3>
-                    <p class="text-gray-400 text-sm">See if your friends can predict your dream vacation or long-term goals.</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-heart-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Relationship Status</h3>
-                    <p class="text-gray-400 text-sm">A fun way to see if they've been paying attention to your love life!</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-basketball-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Sports & Teams</h3>
-                    <p class="text-gray-400 text-sm">Are they aware of your favorite sports team or the last game you watched?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-shopping-bag-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Shopping Habits</h3>
-                    <p class="text-gray-400 text-sm">Do they know if you prefer to shop online or in person?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-camera-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Photo Memories</h3>
-                    <p class="text-gray-400 text-sm">Test their knowledge of your favorite vacation photos and moments captured.</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-game-controller-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Gaming History</h3>
-                    <p class="text-gray-400 text-sm">From your favorite console to your go-to game, do they know your gaming habits?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-ghost-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Spooky Stories</h3>
-                    <p class="text-gray-400 text-sm">Can they recall your biggest fears or your favorite horror movie?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-chat-circle-dots-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Social Media</h3>
-                    <p class="text-gray-400 text-sm">Do they know your most-used emoji or your favorite social media platform?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-sunglasses-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Fashion Sense</h3>
-                    <p class="text-gray-400 text-sm">Can they describe your typical outfit or your favorite accessory?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-microphone-stage-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Karaoke Kings/Queens</h3>
-                    <p class="text-gray-400 text-sm">Do they know your go-to karaoke song or your favorite artist to sing along with?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-graduation-cap-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">School Days</h3>
-                    <p class="text-gray-400 text-sm">Can they recall your favorite subject or a memorable moment from your school years?</p>
-                </div>
-                <div class="card card-sm flex flex-col items-center text-center">
-                    <i class="ph-question-duotone text-gradient text-3xl icon-ph"></i>
-                    <h3 class="font-semibold text-lg mb-1">Random Facts</h3>
-                    <p class="text-gray-400 text-sm">Test them on the little-known facts about you they might have forgotten.</p>
-                </div>
-            </div>
-        </section>
-        
-        <!-- All hidden pages -->
-        <section id="taker-section" class="flex flex-col items-center text-center py-12 hidden">
-            <h2 id="taker-heading" class="text-3xl font-bold mb-4 text-gradient">Take the Quiz!</h2>
-            <p class="text-base lg:text-xl max-w-xl text-gray-400 mb-6">Enter your name to see how well you know your friend!</p>
-            <div class="card w-full max-w-sm">
-                <form id="take-form">
-                    <div class="input-group mb-4">
-                        <label for="taker-name" class="block text-gray-400 mb-1 text-left">Your Name:</label>
-                        <input type="text" id="taker-name" placeholder="Your Name" required class="w-full px-4 py-2 rounded-lg">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Start Quiz</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Quiz Section -->
-        <section id="quiz-section" class="py-8 hidden">
-            <div class="card w-full max-w-2xl mx-auto">
-                <h2 id="quiz-heading" class="text-xl font-bold mb-4 text-center">Your Quiz</h2>
-                <div id="questions-container" class="mb-6">
-                    <!-- Questions will be dynamically injected here -->
-                </div>
-                <div class="flex justify-between items-center mt-6">
-                    <button id="prev-btn" class="btn secondary-btn px-4 py-2 bg-gray-700 hover:bg-gray-600" style="display:none;">Previous</button>
-                    <button id="next-btn" class="btn btn-primary px-4 py-2">Next</button>
-                    <button id="submit-btn" class="btn btn-primary px-4 py-2" style="display:none;">Submit</button>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Share Section -->
-        <section id="share-section" class="flex flex-col items-center text-center py-12 hidden">
-            <h2 class="text-3xl font-bold mb-4 text-gradient">Quiz Created!</h2>
-            <p class="text-base lg:text-xl max-w-xl text-gray-400 mb-6">Share this link with your friends to see how well they know you!</p>
-            <div class="card w-full max-w-xl p-4">
-                <div class="flex items-center w-full bg-gray-700 rounded-full overflow-hidden">
-                    <input type="text" id="share-link" readonly class="flex-grow px-4 py-2 bg-transparent text-sm md:text-base">
-                    <button class="copy-btn btn btn-primary px-4 py-2 font-bold hover:opacity-80 transition-opacity">Copy</button>
-                </div>
-            </div>
-            <a href="#" id="view-results-link" class="text-sm text-red-400 mt-4 underline">View My Results</a>
-        </section>
-        
-        <!-- Scoreboard Section -->
-        <section id="scoreboard-section" class="py-12 hidden">
-            <h2 id="scoreboard-heading" class="text-3xl font-bold mb-8 text-center text-gradient">Scoreboard</h2>
-            <div class="card w-full max-w-2xl mx-auto p-6">
-                <ul id="scores-list" class="space-y-3">
-                    <!-- Scores will be dynamically injected here -->
-                </ul>
-            </div>
-            <div class="text-center mt-6">
-                 <a href="#" class="text-sm text-red-400 underline" id="create-another-quiz-link">Create another quiz</a>
-            </div>
-        </section>
-
-        <!-- Result Section -->
-        <section id="result-section" class="flex flex-col items-center text-center py-12 hidden">
-            <h2 class="text-3xl font-bold mb-4 text-gradient">Your Score</h2>
-            <div class="card w-full max-w-sm p-8">
-                <p class="text-xl font-bold mb-4 text-gray-400">You scored:</p>
-                <p id="final-score" class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-red-800">0 / 0</p>
-            </div>
-            <a href="/" class="text-sm text-red-400 mt-4 underline">Create your own quiz!</a>
-        </section>
-
-        <!-- Creator Dashboard Section -->
-        <section id="creator-dashboard" class="py-12 hidden">
-            <h2 class="text-3xl font-bold mb-8 text-center text-gradient">My Quizzes</h2>
-            <br />
-            <div id="creator-quizzes-list" class="space-y-4 max-w-2xl mx-auto">
-                <!-- User's quizzes will be injected here -->
-            </div>
-            <br />
-            <div class="text-center mt-6">
-                 <button id="create-new-quiz-btn" class="btn btn-primary px-8 py-3">Create New Quiz</button>
-            </div>
-        </section>
-        
+      <!-- Recent quizzes section -->
+      <section id="recent-quizzes-section" class="card" style="display: none;">
+        <h2>Your Recent Quizzes</h2>
+        <div id="recent-quizzes-container"></div>
+      </section>
     </main>
+  </div>
+  <footer>
+    <div class="footer-links">
+      <a href="about.html">About Us</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="disclaimer.html">Disclaimer</a>
+    </div>
+    <div class="social-links">
+      <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+    </div>
+  </footer>
 
-    <script>
-        // === Application Logic using Local Storage ===
-        
-        document.addEventListener('DOMContentLoaded', () => {
-
-            // === DOM Elements ===
-            const creatorSection = document.getElementById('creator-section');
-            const takerSection = document.getElementById('taker-section');
-            const quizSection = document.getElementById('quiz-section');
-            const shareSection = document.getElementById('share-section');
-            const scoreboardSection = document.getElementById('scoreboard-section');
-            const resultSection = document.getElementById('result-section');
-            const creatorDashboard = document.getElementById('creator-dashboard');
-            const creatorQuizzesList = document.getElementById('creator-quizzes-list');
-            const creatorNameInput = document.getElementById('creator-name');
-            const takerNameInput = document.getElementById('taker-name');
-            const questionsContainer = document.getElementById('questions-container');
-            const nextBtn = document.getElementById('next-btn');
-            const prevBtn = document.getElementById('prev-btn');
-            const submitBtn = document.getElementById('submit-btn');
-            const goToDashboardBtnHero = document.getElementById('go-to-dashboard-btn-hero');
-            const goToDashboardBtnDesktop = document.getElementById('go-to-dashboard-btn');
-            const goToDashboardBtnMobile = document.getElementById('go-to-dashboard-btn-mobile');
-            const createNewQuizBtn = document.getElementById('create-new-quiz-btn');
-            const createAnotherQuizLink = document.getElementById('create-another-quiz-link');
-            const takeAQuizBtnDesktop = document.getElementById('take-a-quiz-btn');
-            const takeAQuizBtnMobile = document.getElementById('take-a-quiz-btn-mobile');
-            const hamburgerMenu = document.getElementById('hamburger-menu');
-            const mobileNav = document.getElementById('mobile-nav');
-
-            // === Global State ===
-            let currentQuizQuestions = [];
-            let creatorAnswers = [];
-            let takerAnswers = [];
-            let currentQuestionIndex = 0;
-            let quizId = null;
-            let sharedQuizData = null; // Will hold quiz data from a shared URL
-
-            // === QUIZ QUESTIONS DATA ===
-            const allQuestions = [
-                { question: "What's my favorite animal?", options: ["Dog", "Cat", "Rabbit"], correctAnswer: "Dog" },
-                { question: "What's my favorite food?", options: ["Pizza", "Tacos", "Burger"], correctAnswer: "Pizza" },
-                { question: "What's my biggest fear?", options: ["Spiders", "Heights", "Public speaking"], correctAnswer: "Heights" },
-                { question: "Am I a morning person or a night owl?", options: ["Morning person", "Night owl", "Both"], correctAnswer: "Both" },
-                { question: "Which season do I love most?", options: ["Winter", "Spring", "Summer", "Autumn"], correctAnswer: "Summer" },
-                { question: "If I could travel anywhere, where would I go?", options: ["Japan", "Italy", "New York"], correctAnswer: "Japan" },
-                { question: "My ideal weekend is...", options: ["Staying in and relaxing", "Going out with friends", "Exploring a new place"], correctAnswer: "Staying in and relaxing" },
-                { question: "What's my favorite type of music?", options: ["Pop", "Rock", "Hip Hop", "Classical"], correctAnswer: "Pop" },
-                { question: "My go-to coffee order is...", options: ["Latte", "Espresso", "Americano"], correctAnswer: "Latte" },
-                { question: "Which superpower would I choose?", options: ["Flight", "Invisibility", "Teleportation"], correctAnswer: "Teleportation" },
-                { question: "Am I an introvert or an extrovert?", options: ["Introvert", "Extrovert"], correctAnswer: "Introvert" },
-                { question: "Which social media app do I use the most?", options: ["Instagram", "TikTok", "X", "Snapchat"], correctAnswer: "Instagram" },
-                { question: "My favorite color is...", options: ["Blue", "Red", "Green", "Yellow"], correctAnswer: "Green" },
-                { question: "Which movie genre do I prefer?", options: ["Comedy", "Horror", "Action", "Romance"], correctAnswer: "Action" },
-                { question: "What's my favorite thing to do on a day off?", options: ["Watch movies", "Read a book", "Go for a hike", "Sleep"], correctAnswer: "Sleep" },
-                { question: "Do I prefer a big party or a small gathering?", options: ["Big party", "Small gathering"], correctAnswer: "Small gathering" },
-                { question: "Which fruit do I like best?", options: ["Apple", "Banana", "Orange", "Mango"], correctAnswer: "Mango" },
-                { question: "What's my favorite type of weather?", options: ["Sunny", "Rainy", "Snowy", "Windy"], correctAnswer: "Sunny" },
-                { question: "Do I prefer salty or sweet snacks?", options: ["Salty", "Sweet"], correctAnswer: "Sweet" },
-                { question: "Which video game console do I prefer?", options: ["PlayStation", "Xbox", "Nintendo"], correctAnswer: "PlayStation" },
-                { question: "What's my dream job?", options: ["Artist", "Programmer", "Doctor", "Teacher"], correctAnswer: "Programmer" },
-                { question: "Do I have any pets?", options: ["Yes", "No"], correctAnswer: "No" },
-                { question: "What's my favorite holiday?", options: ["Christmas", "New Year's", "Halloween"], correctAnswer: "Christmas" },
-                { question: "My favorite type of clothing is...", options: ["Casual", "Formal", "Sporty"], correctAnswer: "Casual" },
-                { question: "What's my favorite form of exercise?", options: ["Running", "Weightlifting", "Yoga", "Swimming"], correctAnswer: "Swimming" },
-                { question: "Do I prefer watching movies at home or in a theater?", options: ["At home", "In a theater"], correctAnswer: "At home" },
-                { question: "What's my favorite animal sound?", options: ["Lion's roar", "Bird's chirp", "Cat's meow"], correctAnswer: "Cat's meow" },
-                { question: "Which fictional character do I relate to most?", options: ["Harry Potter", "Frodo Baggins", "Sherlock Holmes"], correctAnswer: "Harry Potter" },
-                { question: "What's my favorite beverage?", options: ["Water", "Juice", "Soda"], correctAnswer: "Juice" },
-                { question: "Am I a messy or a tidy person?", options: ["Messy", "Tidy"], correctAnswer: "Tidy" },
-                { question: "What's my favorite type of book?", options: ["Fantasy", "Science Fiction", "Mystery"], correctAnswer: "Fantasy" },
-                { question: "Which instrument would I love to learn?", options: ["Guitar", "Piano", "Drums"], correctAnswer: "Piano" },
-                { question: "My favorite kind of sandwich is...", options: ["Turkey", "Ham and cheese", "Tuna salad"], correctAnswer: "Turkey" }
-            ];
-
-            // === URL Logic to Determine View ===
-            const urlParams = new URLSearchParams(window.location.search);
-            const encodedQuizData = urlParams.get('quiz');
-            quizId = urlParams.get('id'); // Still needed for scoreboard
-            const view = urlParams.get('view');
-            
-            if (encodedQuizData) {
-                try {
-                    // Decode the Base64 string and parse the JSON
-                    const decodedString = decodeURIComponent(escape(atob(encodedQuizData)));
-                    sharedQuizData = JSON.parse(decodedString);
-                } catch (e) {
-                    console.error("Failed to decode quiz data from URL:", e);
-                    showModal("The quiz link is invalid or corrupted.");
-                }
-            }
-
-            // Helper function to show a specific section and hide all others.
-            function hideAllSections() {
-                const allSections = document.querySelectorAll('main section');
-                allSections.forEach(s => {
-                    s.style.display = 'none';
-                });
-            }
-            
-            function showSection(section) {
-                if (section) {
-                    section.style.display = 'flex';
-                }
-            }
-
-            // === Initial View Logic ===
-            const finalQuizResult = JSON.parse(localStorage.getItem('finalQuizResult'));
-            const hasCreatedQuizzes = localStorage.getItem('myCreatedQuizzes') === 'true';
-
-            if (sharedQuizData) {
-                // A friend is taking a quiz from a shared link
-                hideAllSections();
-                showSection(takerSection);
-                // The quiz data from the URL will be used when the taker form is submitted
-            } else if (finalQuizResult) {
-                // A user just finished a quiz and is seeing their score
-                hideAllSections();
-                showSection(resultSection);
-                document.getElementById('final-score').innerText = `${finalQuizResult.score} / ${finalQuizResult.totalQuestions}`;
-                localStorage.removeItem('finalQuizResult');
-            } else if (quizId && view === 'scoreboard') {
-                // The creator is viewing their scoreboard
-                hideAllSections();
-                showSection(scoreboardSection);
-                loadScoreboard(quizId);
-            } else if (hasCreatedQuizzes) {
-                // A returning creator is viewing their dashboard
-                hideAllSections();
-                showSection(creatorDashboard);
-                loadCreatorDashboard();
-            } else {
-                // A new user is on the homepage
-                document.getElementById('creator-section').style.display = 'flex';
-                document.getElementById('about').style.display = 'block';
-                document.getElementById('featured').style.display = 'block';
-            }
-
-            // === Helper Functions ===
-            /**
-             * Renders the current question and its options.
-             * @param {Array} questions - The array of question objects.
-             * @param {Array} userAnswers - The array of answers provided by the user (either creator or taker).
-             */
-            function renderQuestion(questions, userAnswers) {
-                if (questions.length === 0) return;
-
-                const questionData = questions[currentQuestionIndex];
-                const selectedOption = userAnswers[currentQuestionIndex];
-
-                questionsContainer.innerHTML = `
-                    <h3 class="text-xl font-semibold mb-4">${currentQuestionIndex + 1}. ${questionData.question}</h3>
-                    <div class="quiz-options flex flex-col gap-3">
-                        ${questionData.options.map(option => `
-                            <div class="quiz-option bg-gray-700 hover:bg-gray-600 transition-colors cursor-pointer rounded-lg p-4 text-center border-2 border-transparent ${selectedOption === option ? 'selected !border-red-500' : ''}" data-value="${option}">
-                                ${option}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                document.querySelectorAll('.quiz-option').forEach(optionEl => {
-                    optionEl.addEventListener('click', () => {
-                        document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected', '!border-red-500'));
-                        optionEl.classList.add('selected', '!border-red-500');
-                    });
-                });
-            }
-            
-            /**
-             * Loads the creator's dashboard by fetching their quizzes from local storage.
-             */
-            function loadCreatorDashboard() {
-                const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-                const quizzesListElement = document.getElementById('creator-quizzes-list');
-                
-                if (quizzes.length === 0) {
-                    quizzesListElement.innerHTML = `<p class="text-gray-400 text-center">You haven't created any quizzes yet.</p>`;
-                    localStorage.setItem('myCreatedQuizzes', 'false');
-                    return;
-                }
-
-                localStorage.setItem('myCreatedQuizzes', 'true');
-                quizzesListElement.innerHTML = ``;
-                
-                quizzes.forEach(quiz => {
-                    const quizCard = document.createElement('div');
-                    quizCard.className = 'card flex justify-between items-center';
-                    quizCard.innerHTML = `
-                        <div>
-                            <h3 class="text-lg font-medium">${quiz.creatorName}'s Quiz (${quiz.id})</h3>
-                            <p class="text-sm text-gray-400">${quiz.takersCount || 0} Taker${quiz.takersCount !== 1 ? 's' : ''}</p>
-                        </div>
-                        <a href="?id=${quiz.id}&view=scoreboard" class="btn small-btn secondary-btn bg-gray-700 hover:bg-gray-600 text-white">View Results</a>
-                    `;
-                    quizzesListElement.appendChild(quizCard);
-                });
-            }
-            
-            // === Creator Flow ===
-            document.getElementById('create-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const creatorName = creatorNameInput.value.trim();
-                if (!creatorName) {
-                    showModal('Please enter your name to start the quiz.');
-                    return;
-                }
-
-                // Shuffle and select 15 questions
-                currentQuizQuestions = [...allQuestions].sort(() => Math.random() - 0.5).slice(0, 15);
-                creatorAnswers = Array(currentQuizQuestions.length).fill(null);
-                currentQuestionIndex = 0;
-
-                hideAllSections();
-                showSection(quizSection);
-                renderQuestion(currentQuizQuestions, creatorAnswers);
-                document.getElementById('quiz-heading').innerText = `Your Quiz`;
-            });
-
-            // === Quiz Taker Flow ===
-            document.getElementById('take-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const takerName = takerNameInput.value.trim();
-                if (!takerName) {
-                    showModal('Please enter your name to start the quiz.');
-                    return;
-                }
-                
-                // For a taker, the quiz data comes from the URL, not localStorage
-                if (sharedQuizData) {
-                    currentQuizQuestions = sharedQuizData.questions;
-                    takerAnswers = Array(currentQuizQuestions.length).fill(null);
-                    hideAllSections();
-                    showSection(quizSection);
-                    renderQuestion(currentQuizQuestions, takerAnswers);
-                    document.getElementById('quiz-heading').innerText = `${sharedQuizData.creatorName}'s Quiz`;
-                } else {
-                     // This case should not be reached if the page load logic is correct
-                    showModal("Quiz data is missing. Please use a valid quiz link.");
-                    window.location.href = window.location.origin;
-                }
-            });
-
-            // === Quiz Navigation Logic (for both creator and taker) ===
-            nextBtn.addEventListener('click', () => {
-                const selected = document.querySelector('.quiz-option.selected');
-                if (!selected) {
-                    showModal("Please select an answer.");
-                    return;
-                }
-
-                // If sharedQuizData exists, we're in a taker's flow. Otherwise, it's the creator's flow.
-                const answersArray = sharedQuizData ? takerAnswers : creatorAnswers;
-                answersArray[currentQuestionIndex] = selected.dataset.value;
-
-                if (currentQuestionIndex < currentQuizQuestions.length - 1) {
-                    currentQuestionIndex++;
-                    renderQuestion(currentQuizQuestions, answersArray);
-                }
-
-                prevBtn.style.display = currentQuestionIndex > 0 ? 'block' : 'none';
-                nextBtn.style.display = currentQuestionIndex < currentQuizQuestions.length - 1 ? 'block' : 'none';
-                submitBtn.style.display = currentQuestionIndex === currentQuizQuestions.length - 1 ? 'block' : 'none';
-            });
-
-            prevBtn.addEventListener('click', () => {
-                if (currentQuestionIndex > 0) {
-                    currentQuestionIndex--;
-                    const answersArray = sharedQuizData ? takerAnswers : creatorAnswers;
-                    renderQuestion(currentQuizQuestions, answersArray);
-                }
-                prevBtn.style.display = currentQuestionIndex > 0 ? 'block' : 'none';
-                nextBtn.style.display = currentQuizQuestions.length > 1 && currentQuestionIndex < currentQuizQuestions.length - 1 ? 'block' : 'none';
-                submitBtn.style.display = currentQuestionIndex === currentQuizQuestions.length - 1 ? 'block' : 'none';
-            });
-
-            // === Submit Logic (for both creator and taker) ===
-            submitBtn.addEventListener('click', () => {
-                const selected = document.querySelector('.quiz-option.selected');
-                if (!selected) {
-                    showModal("Please select an answer.");
-                    return;
-                }
-                
-                const answersArray = sharedQuizData ? takerAnswers : creatorAnswers;
-                answersArray[currentQuestionIndex] = selected.dataset.value;
-                
-                // Taker's quiz submission from a shared link
-                if (sharedQuizData) {
-                    let score = 0;
-                    answersArray.forEach((answer, index) => {
-                        if (answer === sharedQuizData.questions[index].correctAnswer) {
-                            score++;
-                        }
-                    });
-
-                    // Store the result in localStorage to show on the results page after reload
-                    const finalScoreData = { score, totalQuestions: currentQuizQuestions.length };
-                    localStorage.setItem('finalQuizResult', JSON.stringify(finalScoreData));
-                    
-                    // Reload the page to display the score.
-                    // The initial page logic will detect 'finalQuizResult' and show the result section.
-                    window.location.reload();
-
-                } else { // Creator's quiz submission
-                    currentQuizQuestions.forEach((question, index) => {
-                        question.correctAnswer = creatorAnswers[index];
-                    });
-
-                    const creatorName = creatorNameInput.value.trim();
-
-                    const newQuizId = Math.random().toString(36).substring(2, 9);
-                    const newQuiz = {
-                        id: newQuizId,
-                        creatorName: creatorName,
-                        questions: currentQuizQuestions,
-                        takersCount: 0,
-                        scores: [],
-                        createdAt: new Date().toISOString()
-                    };
-
-                    const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-                    quizzes.push(newQuiz);
-                    localStorage.setItem('quizzes', JSON.stringify(quizzes));
-                    localStorage.setItem('myCreatedQuizzes', 'true');
-
-                    hideAllSections();
-                    showSection(shareSection);
-
-                    // Encode the quiz data for the shareable link
-                    const quizDataString = JSON.stringify(newQuiz);
-                    // Use a URL-safe Base64 encoding to handle special characters
-                    const encodedQuizData = btoa(unescape(encodeURIComponent(quizDataString)));
-
-                    const quizLink = `${window.location.origin}${window.location.pathname}?quiz=${encodedQuizData}`;
-                    document.getElementById('share-link').value = quizLink;
-
-                    // The "View Results" link for the creator still uses the ID-based URL
-                    document.getElementById('view-results-link').href = `?id=${newQuizId}&view=scoreboard`;
-                }
-            });
-
-            // === Dashboard button logic ===
-            [goToDashboardBtnHero, goToDashboardBtnDesktop, goToDashboardBtnMobile].forEach(btn => {
-                if (btn) {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        hideAllSections();
-                        showSection(creatorDashboard);
-                        loadCreatorDashboard();
-                        closeMobileNav();
-                    });
-                }
-            });
-            
-            // Re-show initial sections on create new quiz button click
-            createNewQuizBtn.addEventListener('click', () => {
-                hideAllSections();
-                document.getElementById('creator-section').style.display = 'flex';
-                document.getElementById('about').style.display = 'block';
-                document.getElementById('featured').style.display = 'block';
-            });
-            
-            createAnotherQuizLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                hideAllSections();
-                document.getElementById('creator-section').style.display = 'flex';
-                document.getElementById('about').style.display = 'block';
-                document.getElementById('featured').style.display = 'block';
-            });
-            
-            [takeAQuizBtnDesktop, takeAQuizBtnMobile].forEach(btn => {
-                if (btn) {
-                    btn.addEventListener('click', (e) => {
-                         e.preventDefault();
-                         showModal('To take a quiz, you must use the unique link shared with you.');
-                         closeMobileNav();
-                    });
-                }
-            });
-
-            // === Scoreboard Logic ===
-            function loadScoreboard(id) {
-                const scoresList = document.getElementById('scores-list');
-                const scoreboardHeading = document.getElementById('scoreboard-heading');
-                scoreboardHeading.innerText = `Loading Scoreboard...`;
-                scoresList.innerHTML = `<p class="text-gray-400 text-center">Loading...</p>`;
-
-                const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-                const quizData = quizzes.find(q => q.id === id);
-                
-                if (!quizData) {
-                    scoreboardHeading.innerText = `Quiz Not Found`;
-                    scoresList.innerHTML = `<p class="text-gray-400 text-center">This quiz does not exist.</p>`;
-                    return;
-                }
-                
-                scoreboardHeading.innerText = `${quizData.creatorName}'s Quiz Scores`;
-                
-                const scores = quizData.scores || [];
-                
-                if (scores.length === 0) {
-                    scoresList.innerHTML = `<p class="text-gray-400 text-center">No scores yet. Share the link to get started!</p>`;
-                    return;
-                }
-
-                scores.sort((a, b) => b.score - a.score);
-                scoresList.innerHTML = '';
-                scores.forEach(score => {
-                    const li = document.createElement('li');
-                    li.className = 'bg-gray-800 p-4 rounded-lg flex justify-between items-center';
-                    li.innerHTML = `<strong class="text-lg">${score.friendName}</strong><span class="text-xl font-bold">${score.score} / ${quizData.questions.length || 15}</span>`;
-                    scoresList.appendChild(li);
-                });
-            }
-
-            // === Copy Link Functionality ===
-            document.querySelector('.copy-btn').addEventListener('click', () => {
-                const linkInput = document.getElementById('share-link');
-                linkInput.select();
-                document.execCommand('copy');
-                showModal("Link copied to clipboard!");
-            });
-
-            // === Modal Functions ===
-            function showModal(message) {
-                const modal = document.getElementById('myModal');
-                const modalText = document.getElementById('modal-text');
-                modalText.textContent = message;
-                modal.style.display = 'flex';
-            }
-
-            window.closeModal = function() {
-                const modal = document.getElementById('myModal');
-                modal.style.display = 'none';
-            }
-            
-            // === Hamburger Menu Logic ===
-            // Existing
-hamburgerMenu.addEventListener('click', () => {
-    mobileNav.classList.toggle('open');
-    hamburgerMenu.classList.toggle('active'); // NEW: toggle "×" look
-});
-
-window.closeMobileNav = () => {
-    mobileNav.classList.remove('open');
-    hamburgerMenu.classList.remove('active'); // Reset to hamburger
-};
-        });
-    </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+  <script src="questions.js"></script>
 </body>
 </html>
 
