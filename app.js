@@ -30,8 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === URL Logic to Determine View ===
     const urlParams = new URLSearchParams(window.location.search);
-    quizId = urlParams.get('id');
-    const view = urlParams.get('view');
+    // Sanitize and normalize params
+    const rawIdParam = urlParams.get('id');
+    quizId = rawIdParam ? rawIdParam.trim() : null;
+    const rawViewParam = urlParams.get('view');
+    const view = rawViewParam ? rawViewParam.toLowerCase() : null;
 
     function showView(section) {
         [
@@ -71,6 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const creatorQuizzes = JSON.parse(localStorage.getItem('myCreatedQuizzes')) || [];
 
     // === Initial Routing (order matters) ===
+    // Helper: validate quiz id shape (defensive – older links may have different lengths)
+    const isValidQuizId = (id) => typeof id === 'string' && /^[A-Za-z0-9]{6,}$/.test(id);
+    // Helper: preflight check if a quiz exists, used to avoid false "not found" later
+    function preflightCheckQuiz(id) {
+        if (!isValidQuizId(id)) return Promise.resolve(false);
+        return database.ref(`quizzes/${id}`).once('value').then(s => !!s.val()).catch(() => false);
+    }
     if (quizId && view === 'scoreboard') {
         showView(scoreboardSection);
         loadScoreboard(quizId);
@@ -87,6 +97,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (quizId) {
         // Taker arriving to take a quiz
         showView(takerSection);
+        // Preflight quiz existence to surface friendly guidance early
+        preflightCheckQuiz(quizId).then(exists => {
+            if (!exists) {
+                const heading = document.getElementById('taker-heading');
+                const sub = document.getElementById('taker-subheading');
+                if (heading) heading.innerText = 'Quiz link is invalid or expired';
+                if (sub) sub.innerText = 'Start your own quiz below or check your recent results.';
+                // Offer the creator flow instead of a hard redirect
+                showView(creatorSection);
+                loadRecentQuizzes();
+            }
+        });
     } else if (creatorQuizzes.length > 0) {
         // Creator has made quizzes → show dashboard
         showView(creatorDashboard);
@@ -113,6 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
             '"': '&quot;',
             "'": '&#39;'
         })[ch]);
+    }
+
+    // === Utility: Normalize questions from Firebase (array or object) ===
+    function normalizeQuestions(maybeQuestions) {
+        if (!maybeQuestions) return [];
+        if (Array.isArray(maybeQuestions)) return maybeQuestions;
+        // Convert numeric-keyed object to ordered array
+        const keys = Object.keys(maybeQuestions)
+            .filter(k => /^\d+$/.test(k))
+            .map(k => Number(k))
+            .sort((a, b) => a - b);
+        return keys.map(i => maybeQuestions[String(i)]);
     }
 
     // === Utility: Stable image per option text (no data changes required) ===
@@ -266,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         database.ref(`quizzes/${quizId}`).once('value').then(snapshot => {
             const quizData = snapshot.val();
             if (quizData) {
-                currentQuizQuestions = quizData.questions || [];
+                currentQuizQuestions = normalizeQuestions(quizData.questions);
                 takerAnswers = Array(currentQuizQuestions.length).fill(null);
                 showView(quizSection);
                 renderQuestion(currentQuizQuestions, takerAnswers);
@@ -277,8 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextBtn.style.display = currentQuizQuestions.length > 1 ? 'block' : 'none';
                 submitBtn.style.display = currentQuizQuestions.length === 1 ? 'block' : 'none';
             } else {
-                alert("Quiz not found!");
-                window.location.href = 'index.html';
+                // Graceful fallback instead of alert+redirect
+                showView(creatorSection);
+                const heading = document.getElementById('taker-heading');
+                const sub = document.getElementById('taker-subheading');
+                if (heading) heading.innerText = 'Quiz not found';
+                if (sub) sub.innerText = 'The link may be invalid or expired. Start a new quiz below.';
+                loadRecentQuizzes();
             }
         });
     });
@@ -330,9 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Taker submits -> score and persist taker result for return visits
             database.ref(`quizzes/${quizId}`).once('value').then(snapshot => {
                 const quizData = snapshot.val();
+                const questionsArr = normalizeQuestions(quizData.questions);
                 let score = 0;
                 answersArray.forEach((answer, index) => {
-                    if (answer === quizData.questions[index].correctAnswer) {
+                    if (questionsArr[index] && answer === questionsArr[index].correctAnswer) {
                         score++;
                     }
                 });
@@ -442,14 +482,17 @@ localStorage.setItem('myCreatedQuizzes', JSON.stringify(myQuizzes));
             const quizData = snapshot.val();
             if (quizData) {
                 document.getElementById('scoreboard-heading').innerText = `${quizData.creatorName}'s Quiz Scores`;
-                document.getElementById('scoreboard-subheading').innerText = `Total Questions: ${quizData.questions.length}`;
+                const totalQs = Array.isArray(quizData.questions)
+                    ? quizData.questions.length
+                    : (quizData.questions ? Object.keys(quizData.questions).length : 0);
+                document.getElementById('scoreboard-subheading').innerText = `Total Questions: ${totalQs}`;
                 const scoresList = document.getElementById('scores-list');
                 scoresList.innerHTML = '';
                 const scores = quizData.scores ? Object.values(quizData.scores) : [];
                 scores.sort((a, b) => (b.score || 0) - (a.score || 0));
                 scores.forEach(score => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<strong>${score.friendName || 'Anonymous'}</strong><span>${score.score} / ${quizData.questions.length}</span>`;
+                    li.innerHTML = `<strong>${score.friendName || 'Anonymous'}</strong><span>${score.score} / ${totalQs}</span>`;
                     scoresList.appendChild(li);
                 });
 
@@ -460,8 +503,14 @@ localStorage.setItem('myCreatedQuizzes', JSON.stringify(myQuizzes));
                     scoresList.appendChild(li);
                 }
             } else {
-                alert("Quiz not found!");
-                window.location.href = 'index.html';
+                // Gentle UX for missing quizzes
+                document.getElementById('scoreboard-heading').innerText = 'Quiz not found';
+                document.getElementById('scoreboard-subheading').innerText = '';
+                const scoresList = document.getElementById('scores-list');
+                scoresList.innerHTML = '';
+                const li = document.createElement('li');
+                li.innerHTML = `<em>This quiz link is invalid or may have been removed.</em>`;
+                scoresList.appendChild(li);
             }
         });
     }
@@ -484,7 +533,7 @@ localStorage.setItem('myCreatedQuizzes', JSON.stringify(myQuizzes));
         // We want the total question count for "/total"
         database.ref(`quizzes/${id}`).once('value').then(snap => {
             const data = snap.val() || {};
-            const total = data.questions ? data.questions.length : 0;
+            const total = normalizeQuestions(data.questions).length;
 
             database.ref(`quizzes/${id}/scores`).on('value', (snapshot) => {
                 const scores = snapshot.val();
